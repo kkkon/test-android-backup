@@ -7,7 +7,7 @@
 
     <groupId>jp.ne.sakura.kkkon.test.android.backup</groupId>
     <artifactId>test-android-backup-pom</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>pom</packaging>
 
     <name>Test Android Backup POM</name>
@@ -30,7 +30,7 @@
     <connection>scm:git:https://github.com/kkkon/test-android-backup.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/kkkon/test-android-backup.git</developerConnection>
     <url>https://github.com/kkkon/test-android-backup</url>
-    <tag>HEAD</tag>
+    <tag>test-android-backup-pom-0.1</tag>
   </scm>
 
   <developers>

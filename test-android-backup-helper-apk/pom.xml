@@ -8,12 +8,12 @@
     <parent>
         <groupId>jp.ne.sakura.kkkon.test.android.backup</groupId>
         <artifactId>test-android-backup-pom</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
 
     <groupId>jp.ne.sakura.kkkon.test.android.backup</groupId>
     <artifactId>test-android-backup-helper-apk</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>apk</packaging>
 
     <name>Test Android Backup Helper Application for Android</name>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>jp.ne.sakura.kkkon.test.android.backup</groupId>
             <artifactId>test-android-backup-lib</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
             <!--<type>aar</type>-->
         </dependency>
     </dependencies>
