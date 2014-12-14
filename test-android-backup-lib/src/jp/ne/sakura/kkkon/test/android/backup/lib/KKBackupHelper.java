@@ -76,34 +76,6 @@ public class KKBackupHelper
         return appInfo;
     }
 
-    private static Resources getResourcesForApplication()
-    {
-        assert null != mContext;
-
-        if ( null == mContext )
-        {
-            return null;
-        }
-
-        final PackageManager pm = mContext.getPackageManager();
-        if ( null == pm )
-        {
-            return null;
-        }
-
-        Resources res = null;
-        try
-        {
-            res = pm.getResourcesForApplication( mContext.getPackageName() );
-        }
-        catch ( PackageManager.NameNotFoundException e )
-        {
-            
-        }
-
-        return res;
-    }
-
     public static synchronized void initialize( final Context context )
     {
         {
@@ -169,36 +141,6 @@ public class KKBackupHelper
                 Log.e( TAG, "register url http://code.google.com/android/backup/signup.html" );
             }
 
-            {
-                //final Resources res = mContext.getResources();
-//                final Resources res = getResourcesForApplication();
-//                if ( null != res )
-//                {
-//                    final boolean allowBackup = res.getBoolean( android.R.attr.allowBackup /* API-4 */ ); 
-//                    Log.d( TAG, "allowBackup=" + allowBackup );
-//                    final String backupAgent = res.getString( android.R.attr.backupAgent /* API-4 */ );
-//                    Log.d( TAG, "backupAgent=" + backupAgent );
-//                    final boolean killAfterRestore = res.getBoolean( android.R.attr.killAfterRestore /* API-5 */ );
-//                    Log.d( TAG, "killAfterRestore=" + killAfterRestore );
-//                    final boolean restoreAnyVersion = res.getBoolean( android.R.attr.restoreAnyVersion /* API-8 */ );
-//                    Log.d( TAG, "restoreAnyVersion=" + restoreAnyVersion );
-//                }
-
-                final int[] backupManagerAttr = {
-                    android.R.attr.allowBackup /* API-4 */
-                    , android.R.attr.backupAgent /* API-4 */
-                    , android.R.attr.killAfterRestore /* API-5 */
-                    , android.R.attr.restoreAnyVersion /* API-8 */
-                };
-                TypedArray typedArray = mContext.obtainStyledAttributes( backupManagerAttr );
-                Log.d( TAG, "typedArray=" + typedArray );
-                if ( null != typedArray )
-                {
-                    final boolean allowBackup = typedArray.getBoolean( 0, false );
-                    Log.d( TAG, "allowBackup=" + allowBackup );
-                    typedArray.recycle();
-                }
-            }
         }
     }
 
