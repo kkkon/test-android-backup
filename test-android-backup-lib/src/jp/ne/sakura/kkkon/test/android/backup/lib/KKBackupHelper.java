@@ -134,29 +134,18 @@ public class KKBackupHelper
 
     }
 
-    public static synchronized void initialize( final Context context )
+    private static void checkBackupAgent()
     {
+        if ( null == mContext )
         {
-            Class<?>    clazz = null;
-            try
-            {
-                clazz = Class.forName( "android.os.Build" );
-                isAndroid = true;
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(KKBackupHelper.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            return;
         }
 
-        mContext = context;
-        mBM = new BackupManager( context );
-
-        checkBackupApiKey();
-
+        boolean haveBackupAgent = false;
         {
             final ApplicationInfo appInfo = mContext.getApplicationInfo();
             final String backupAgentName = appInfo.backupAgentName; /* API-8 */
             Log.d( TAG, "backupAgentName=" + backupAgentName );
-            boolean haveBackupAgent = false;
             if ( null != appInfo.backupAgentName )
             {
                 {
@@ -187,53 +176,73 @@ public class KKBackupHelper
                     }
                 }
             }
+        }
 
-
-            if ( false == haveBackupAgent )
+        if ( false == haveBackupAgent )
+        {
+            final ApplicationInfo appInfoFromPM = getApplicationInfoFromPackageManager( 0 );
+            if ( null != appInfoFromPM )
             {
-                final ApplicationInfo appInfoFromPM = getApplicationInfoFromPackageManager( 0 );
-                if ( null != appInfoFromPM )
+                Log.d( TAG, "backupAgentName from PackageManager=" + appInfoFromPM.backupAgentName );
+                if ( null != appInfoFromPM.backupAgentName )
                 {
-                    Log.d( TAG, "backupAgentName from PackageManager=" + appInfoFromPM.backupAgentName );
-                    if ( null != appInfoFromPM.backupAgentName )
                     {
+                        Class<?>    clazz = null;
+                        try
                         {
-                            Class<?>    clazz = null;
+                            clazz = Class.forName( appInfoFromPM.backupAgentName );
+                            haveBackupAgent = true;
+                        } catch (ClassNotFoundException ex) {
+                            Log.d( TAG, "" + ex );
+                        }
+                        if ( false == haveBackupAgent )
+                        {
                             try
                             {
-                                clazz = Class.forName( appInfoFromPM.backupAgentName );
+                                if ( appInfoFromPM.backupAgentName.startsWith(".") )
+                                {
+                                    clazz = Class.forName( appInfoFromPM.packageName + appInfoFromPM.backupAgentName );
+                                }
+                                else
+                                {
+                                    clazz = Class.forName( appInfoFromPM.packageName + "." + appInfoFromPM.backupAgentName );
+                                }
                                 haveBackupAgent = true;
                             } catch (ClassNotFoundException ex) {
                                 Log.d( TAG, "" + ex );
-                            }
-                            if ( false == haveBackupAgent )
-                            {
-                                try
-                                {
-                                    if ( appInfoFromPM.backupAgentName.startsWith(".") )
-                                    {
-                                        clazz = Class.forName( appInfoFromPM.packageName + appInfoFromPM.backupAgentName );
-                                    }
-                                    else
-                                    {
-                                        clazz = Class.forName( appInfoFromPM.packageName + "." + appInfoFromPM.backupAgentName );
-                                    }
-                                    haveBackupAgent = true;
-                                } catch (ClassNotFoundException ex) {
-                                    Log.d( TAG, "" + ex );
-                                }
                             }
                         }
                     }
                 }
             }
-
-            if ( false == haveBackupAgent )
-            {
-                Log.e( TAG, "AndroidManifest.xml doesn't contain\n" + "<application android:backupAgent=\"xxxxx\"/>" );
-            }
-
         }
+
+        if ( false == haveBackupAgent )
+        {
+            Log.e( TAG, "AndroidManifest.xml doesn't contain\n" + "<application android:backupAgent=\"xxxxx\"/>\n" + "format of class-name similar to '<application><activity android:name>'" );
+        }
+
+    }
+
+    public static synchronized void initialize( final Context context )
+    {
+        {
+            Class<?>    clazz = null;
+            try
+            {
+                clazz = Class.forName( "android.os.Build" );
+                isAndroid = true;
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(KKBackupHelper.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        mContext = context;
+        mBM = new BackupManager( context );
+
+        checkBackupApiKey();
+        checkBackupAgent();
+
     }
 
     public static void requestBackup()
