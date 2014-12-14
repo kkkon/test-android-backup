@@ -29,8 +29,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.util.Log;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -97,6 +95,38 @@ public class KKBackupHelper
             final String backupAgentName = appInfo.backupAgentName; /* API-8 */
             Log.d( TAG, "backupAgentName=" + backupAgentName );
             boolean haveBackupApiKey = false;
+            boolean haveBackupAgent = false;
+            if ( null != appInfo.backupAgentName )
+            {
+                {
+                    Class<?>    clazz = null;
+                    try
+                    {
+                        clazz = Class.forName( appInfo.backupAgentName );
+                        haveBackupAgent = true;
+                    } catch (ClassNotFoundException ex) {
+                        Log.d( TAG, "" + ex );
+                    }
+                    if ( false == haveBackupAgent )
+                    {
+                        try
+                        {
+                            if ( appInfo.backupAgentName.startsWith(".") )
+                            {
+                                clazz = Class.forName( appInfo.packageName + appInfo.backupAgentName );
+                            }
+                            else
+                            {
+                                clazz = Class.forName( appInfo.packageName + "." + appInfo.backupAgentName );
+                            }
+                            haveBackupAgent = true;
+                        } catch (ClassNotFoundException ex) {
+                            Log.d( TAG, "" + ex );
+                        }
+                    }
+                }
+            }
+
             if ( null != appInfo.metaData )
             {
                 if ( appInfo.metaData.containsKey( ANDROID_BACKUP_APIKEY ) )
@@ -111,12 +141,51 @@ public class KKBackupHelper
                 }
             }
 
+
+            if ( false == haveBackupAgent )
+            {
+                final ApplicationInfo appInfoFromPM = getApplicationInfoFromPackageManager( 0 );
+                if ( null != appInfoFromPM )
+                {
+                    Log.d( TAG, "backupAgentName from PackageManager=" + appInfoFromPM.backupAgentName );
+                    if ( null != appInfoFromPM.backupAgentName )
+                    {
+                        {
+                            Class<?>    clazz = null;
+                            try
+                            {
+                                clazz = Class.forName( appInfoFromPM.backupAgentName );
+                                haveBackupAgent = true;
+                            } catch (ClassNotFoundException ex) {
+                                Log.d( TAG, "" + ex );
+                            }
+                            if ( false == haveBackupAgent )
+                            {
+                                try
+                                {
+                                    if ( appInfoFromPM.backupAgentName.startsWith(".") )
+                                    {
+                                        clazz = Class.forName( appInfoFromPM.packageName + appInfoFromPM.backupAgentName );
+                                    }
+                                    else
+                                    {
+                                        clazz = Class.forName( appInfoFromPM.packageName + "." + appInfoFromPM.backupAgentName );
+                                    }
+                                    haveBackupAgent = true;
+                                } catch (ClassNotFoundException ex) {
+                                    Log.d( TAG, "" + ex );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             if ( false == haveBackupApiKey )
             {
                 final ApplicationInfo appInfoFromPM = getApplicationInfoFromPackageManager( PackageManager.GET_META_DATA );
                 if ( null != appInfoFromPM )
                 {
-                    Log.d( TAG, "backupAgentName from PackageManager=" + appInfoFromPM.backupAgentName );
                     Log.d( TAG, "metaData from PakcageManager=" + appInfoFromPM.metaData );
                     if ( null != appInfoFromPM.metaData )
                     {
@@ -139,6 +208,11 @@ public class KKBackupHelper
             {
                 Log.e( TAG, "AndroidManifest.xml doesn't contain\n" + "<application><meta-data android:name=\"" + ANDROID_BACKUP_APIKEY + "\" android:value=\"xxxxxx\" /></application>" );
                 Log.e( TAG, "register url http://code.google.com/android/backup/signup.html" );
+            }
+
+            if ( false == haveBackupAgent )
+            {
+                Log.e( TAG, "AndroidManifest.xml doesn't contain\n" + "<application android:backupAgent=\"xxxxx\"/>" );
             }
 
         }
