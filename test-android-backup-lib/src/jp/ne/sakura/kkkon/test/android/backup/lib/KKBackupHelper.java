@@ -30,8 +30,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -42,7 +40,6 @@ public class KKBackupHelper
     private static final String TAG = "kk-Backup-Helper";
     private static final String ANDROID_BACKUP_APIKEY = "com.google.android.backup.api_key";
 
-    private static boolean isAndroid = false;
     private static Context mContext = null;
     private static BackupManager mBM = null;
 
@@ -226,17 +223,6 @@ public class KKBackupHelper
 
     public static synchronized void initialize( final Context context )
     {
-        {
-            Class<?>    clazz = null;
-            try
-            {
-                clazz = Class.forName( "android.os.Build" );
-                isAndroid = true;
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(KKBackupHelper.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
         mContext = context;
         mBM = new BackupManager( context );
 
