@@ -24,3 +24,9 @@ proguard/
 
 # Log Files
 *.log
+
+#maven
+target
+
+# NetBeans
+nbactions.xml
