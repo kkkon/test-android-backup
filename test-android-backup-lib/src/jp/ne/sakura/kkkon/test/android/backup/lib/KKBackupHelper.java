@@ -74,6 +74,66 @@ public class KKBackupHelper
         return appInfo;
     }
 
+    private static void checkBackupApiKey()
+    {
+        if ( null == mContext )
+        {
+            return;
+        }
+
+        boolean haveBackupApiKey = false;
+        {
+            final ApplicationInfo appInfo = mContext.getApplicationInfo();
+            if ( null != appInfo )
+            {
+                if ( null != appInfo.metaData )
+                {
+                    if ( appInfo.metaData.containsKey( ANDROID_BACKUP_APIKEY ) )
+                    {
+                        final String backupApiKey = appInfo.metaData.getString(ANDROID_BACKUP_APIKEY);
+                        Log.d( TAG, "backupApiKey from Context=" + backupApiKey );
+                        haveBackupApiKey = true;
+                    }
+                    else
+                    {
+                        Log.d( TAG, "metaData from Context not contain key=" + ANDROID_BACKUP_APIKEY );
+                    }
+                }
+            }
+        }
+
+        if ( false == haveBackupApiKey )
+        {
+            final ApplicationInfo appInfoFromPM = getApplicationInfoFromPackageManager( PackageManager.GET_META_DATA );
+            if ( null != appInfoFromPM )
+            {
+                Log.d( TAG, "metaData from PakcageManager=" + appInfoFromPM.metaData );
+                if ( null != appInfoFromPM.metaData )
+                {
+                    if ( appInfoFromPM.metaData.containsKey( ANDROID_BACKUP_APIKEY ) )
+                    {
+                        final String backupApiKey = appInfoFromPM.metaData.getString(ANDROID_BACKUP_APIKEY);
+                        Log.d( TAG, "backupApiKey from PackageManager=" + backupApiKey );
+                        haveBackupApiKey = true;
+                    }
+                    else
+                    {
+                        Log.d( TAG, "metaData from PackageManager not contain key=" + ANDROID_BACKUP_APIKEY );
+                    }
+                }
+            }
+
+        }
+
+
+        if ( false == haveBackupApiKey )
+        {
+            Log.e( TAG, "AndroidManifest.xml doesn't contain\n" + "<application><meta-data android:name=\"" + ANDROID_BACKUP_APIKEY + "\" android:value=\"xxxxxx\" /></application>" );
+            Log.e( TAG, "register url http://code.google.com/android/backup/signup.html" );
+        }
+
+    }
+
     public static synchronized void initialize( final Context context )
     {
         {
@@ -90,11 +150,12 @@ public class KKBackupHelper
         mContext = context;
         mBM = new BackupManager( context );
 
+        checkBackupApiKey();
+
         {
             final ApplicationInfo appInfo = mContext.getApplicationInfo();
             final String backupAgentName = appInfo.backupAgentName; /* API-8 */
             Log.d( TAG, "backupAgentName=" + backupAgentName );
-            boolean haveBackupApiKey = false;
             boolean haveBackupAgent = false;
             if ( null != appInfo.backupAgentName )
             {
@@ -124,20 +185,6 @@ public class KKBackupHelper
                             Log.d( TAG, "" + ex );
                         }
                     }
-                }
-            }
-
-            if ( null != appInfo.metaData )
-            {
-                if ( appInfo.metaData.containsKey( ANDROID_BACKUP_APIKEY ) )
-                {
-                    final String backupApiKey = appInfo.metaData.getString(ANDROID_BACKUP_APIKEY);
-                    Log.d( TAG, "backupApiKey from Context=" + backupApiKey );
-                    haveBackupApiKey = true;
-                }
-                else
-                {
-                    Log.d( TAG, "metaData from Context not contain key=" + ANDROID_BACKUP_APIKEY );
                 }
             }
 
@@ -179,35 +226,6 @@ public class KKBackupHelper
                         }
                     }
                 }
-            }
-
-            if ( false == haveBackupApiKey )
-            {
-                final ApplicationInfo appInfoFromPM = getApplicationInfoFromPackageManager( PackageManager.GET_META_DATA );
-                if ( null != appInfoFromPM )
-                {
-                    Log.d( TAG, "metaData from PakcageManager=" + appInfoFromPM.metaData );
-                    if ( null != appInfoFromPM.metaData )
-                    {
-                        if ( appInfoFromPM.metaData.containsKey( ANDROID_BACKUP_APIKEY ) )
-                        {
-                            final String backupApiKey = appInfoFromPM.metaData.getString(ANDROID_BACKUP_APIKEY);
-                            Log.d( TAG, "backupApiKey from PackageManager=" + backupApiKey );
-                            haveBackupApiKey = true;
-                        }
-                        else
-                        {
-                            Log.d( TAG, "metaData from PackageManager not contain key=" + ANDROID_BACKUP_APIKEY );
-                        }
-                    }
-                }
-
-            }
-
-            if ( false == haveBackupApiKey )
-            {
-                Log.e( TAG, "AndroidManifest.xml doesn't contain\n" + "<application><meta-data android:name=\"" + ANDROID_BACKUP_APIKEY + "\" android:value=\"xxxxxx\" /></application>" );
-                Log.e( TAG, "register url http://code.google.com/android/backup/signup.html" );
             }
 
             if ( false == haveBackupAgent )
