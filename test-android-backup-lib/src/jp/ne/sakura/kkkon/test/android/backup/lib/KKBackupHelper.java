@@ -244,7 +244,7 @@ public class KKBackupHelper
                 super.restoreFinished(error);
                 if ( 0 == error )
                 {
-                    System.exit( 0 );
+                    //System.exit( 0 );
                 }
             }
         });
