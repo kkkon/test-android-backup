@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="jp.ne.sakura.kkkon.test.android.backup"
+  android:installLocation="preferExternal"
+  android:versionCode="1"
+  android:versionName="1.0.0"
+>
+  <application
+    android:label="@string/app_name"
+    android:backupAgent="jp.ne.sakura.kkkon.test.android.backup.BackupAgent"
+  >
+  <!--
+    android:icon="@drawable/ic_launcher"
+  -->
+  <!--
+    android:allowBackup="true"
+    android:backupAgent=""
+    android:killAfterRestore="true"
+    android:restoreAnyVersion="true"
+  -->
+    <activity android:name="MainActivity"
+              android:label="@string/app_name">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <meta-data
+        android:name="com.google.android.backup.api_key"
+        android:value="AEdPqrEAAAAIwXzKJUM8aJYFRgdbwzyPp2IszFiBsxwUU_Iw6Q"
+    />
+  </application>
+  <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="10" />
+</manifest> 
